@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Restaurant Sales Calculator</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-br from-gray-100 to-gray-200 min-h-screen p-4">
+
+  <h1 class="text-2xl font-bold text-center mb-6 text-blue-700">🍽️ Restaurant Sales Calculator</h1>
+
+  <!-- Input Form -->
+  <div class="bg-white p-5 rounded-2xl shadow-lg max-w-md mx-auto">
+    <form id="salesForm" class="space-y-4">
+      <input type="number" id="restaurantOnline" placeholder="Restaurant Online Payment" class="w-full border p-3 rounded-lg text-lg">
+      <input type="number" id="restaurantCash" placeholder="Restaurant Cash Payment" class="w-full border p-3 rounded-lg text-lg">
+      <input type="number" id="roomOnline" placeholder="Room Online Payment" class="w-full border p-3 rounded-lg text-lg">
+      <input type="number" id="roomCash" placeholder="Room Cash Payment" class="w-full border p-3 rounded-lg text-lg">
+      <input type="number" id="discount" placeholder="Total Discount" class="w-full border p-3 rounded-lg text-lg">
+      <input type="number" id="pending" placeholder="Pending Amount" class="w-full border p-3 rounded-lg text-lg">
+      <input type="number" id="actualCash" placeholder="My sale in App (GST+Non GST)" class="w-full border p-3 rounded-lg text-lg">
+      <button type="submit" class="w-full bg-blue-600 text-white p-3 rounded-lg text-lg font-semibold hover:bg-blue-700">Calculate</button>
+    </form>
+  </div>
+
+  <!-- Summary -->
+  <div id="summaryBox" class="bg-white p-5 rounded-2xl shadow-lg max-w-md mx-auto mt-6 hidden">
+    <h2 class="text-xl font-semibold mb-3 text-gray-800">📊 Summary</h2>
+    <ul id="summary" class="space-y-2 text-lg"></ul>
+  </div>
+
+  <script>
+    document.getElementById("salesForm").addEventListener("submit", e => {
+      e.preventDefault();
+
+      const restOnline = parseFloat(document.getElementById("restaurantOnline").value) || 0;
+      const restCash = parseFloat(document.getElementById("restaurantCash").value) || 0;
+      const roomOnline = parseFloat(document.getElementById("roomOnline").value) || 0;
+      const roomCash = parseFloat(document.getElementById("roomCash").value) || 0;
+      const discount = parseFloat(document.getElementById("discount").value) || 0;
+      const pending = parseFloat(document.getElementById("pending").value) || 0;
+      const actualCash = parseFloat(document.getElementById("actualCash").value) || 0;
+
+      const totalCollected = restOnline + restCash + roomOnline + roomCash;
+      const totalSale = totalCollected + discount + pending;
+      const difference = actualCash - totalSale;
+
+      let matchText = "";
+      if (difference === 0) {
+        matchText = `<span class="text-green-600 font-bold">✅ Sale matches the total collected</span>`;
+      } else if (difference > 0) {
+        matchText = `<span class="text-blue-600 font-bold">ℹ️ Extra Sale: ${difference}</span>`;
+      } else {
+        matchText = `<span class="text-red-600 font-bold">⚠️ Short Sale: ${Math.abs(difference)}</span>`;
+      }
+
+      document.getElementById("summary").innerHTML = `
+        <li><b>Total Sale:</b> ${totalSale}</li>
+        <li><b>Total Discount:</b> ${discount}</li>
+        <li><b>Pending Amount:</b> ${pending}</li>
+        <li><b>Restaurant Online:</b> ${restOnline}</li>
+        <li><b>Restaurant Cash:</b> ${restCash}</li>
+        <li><b>Room Online:</b> ${roomOnline}</li>
+        <li><b>Room Cash:</b> ${roomCash}</li>
+        <li><b>Total Collected:</b> ${totalCollected}</li>
+        <li><b>My sale in App:</b> ${actualCash}</li>
+        <li class="mt-2">${matchText}</li>
+      `;
+
+      // Show summary box
+      document.getElementById("summaryBox").classList.remove("hidden");
+
+      // Scroll into view
+      document.getElementById("summaryBox").scrollIntoView({ behavior: "smooth" });
+    });
+  </script>
+
+</body>
+</html>
